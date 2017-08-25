@@ -3,26 +3,34 @@ import cv2
 
 # Identify pixels above the threshold
 # Threshold of RGB > 160 does a nice job of identifying ground pixels only
-def color_thresh(img, rgb_thresh):
+# def color_thresh(img, rgb_thresh):
+#     # Create an array of zeros same xy size as img, but single channel
+#     color_select = np.zeros_like(img[:,:,0])
+#     # Require that each pixel be above all three threshold values in RGB
+#     # above_thresh will now contain a boolean array with "True"
+#     # where threshold was met
+#     above_thresh = (img[:,:,0] > rgb_thresh[0])  \
+#                 & (img[:,:,1] > rgb_thresh[1]) \
+#                 & (img[:,:,2] > rgb_thresh[2])
+#     # Index the array of zeros with the boolean array and set to 1
+#     color_select[above_thresh] = 1
+#     # Return the binary image
+#     return color_select
+
+def color_thresh(img, rgb_thresh_low, rgb_thresh_high):
     # Create an array of zeros same xy size as img, but single channel
     color_select = np.zeros_like(img[:,:,0])
-    # color_select_nav = np.zeros_like(img[:,:,0])
-    # color_select_obstacle = np.zeros_like(img[:,:,0])
-    # color_select_rock = np.zeros_like(img[:,:,0])
     # Require that each pixel be above all three threshold values in RGB
     # above_thresh will now contain a boolean array with "True"
     # where threshold was met
-    above_thresh = (img[:,:,0] > rgb_thresh[0]) \
-                & (img[:,:,1] > rgb_thresh[1]) \
-                & (img[:,:,2] > rgb_thresh[2])
+    above_thresh = (img[:,:,0] > rgb_thresh_low[0]) & (img[:,:,0] <= rgb_thresh_high[0]) \
+                & (img[:,:,1] > rgb_thresh_low[1]) & (img[:,:,1] <= rgb_thresh_high[1])\
+                & (img[:,:,2] > rgb_thresh_low[2]) & (img[:,:,2] <= rgb_thresh_high[2])
     # Index the array of zeros with the boolean array and set to 1
     color_select[above_thresh] = 1
-    # color_select_nav[above_thresh] = 1
-    # color_select_obstacle[above_thresh] = 1
-    # color_select_rock[above_thresh] = 1
     # Return the binary image
-    # return color_select_nav, color_select_obstacle, color_select_rock
     return color_select
+
 
 # Define a function to convert to rover-centric coordinates
 def rover_coords(binary_img):
@@ -81,12 +89,11 @@ def pix_to_world(xpix, ypix, xpos, ypos, yaw, world_size, scale):
 
 # Define a function to perform a perspective transform
 def perspect_transform(img, src, dst):
-
     M = cv2.getPerspectiveTransform(src, dst)
     warped = cv2.warpPerspective(img, M, (img.shape[1], img.shape[0]))# keep same size as input image
-
-    return warped
-
+    mask = cv2.warpPerspective(np.ones_like(img[:,:,0]), M, (img.shape[1], img.shape[0])) # make a mask of 1s
+    return warped, mask
+    # return warped
 
 # Apply the above functions in succession and update the Rover state accordingly
 def perception_step(Rover):
@@ -104,51 +111,65 @@ def perception_step(Rover):
                       ])
 
     # 2) Apply perspective transform
-    warped = perspect_transform(Rover.img, source, destination)
+    warped, mask = perspect_transform(Rover.img, source, destination)
+    # warped = perspect_transform(Rover.img, source, destination)
 
     # 3) Apply color threshold to identify navigable terrain/obstacles/rock samples
-    # threshed = color_thresh(warped, rgb_thresh=(160, 160, 160))
-    threshed_nav = color_thresh(warped, rgb_thresh=(160, 160, 160))
-    threshed_obstacle = color_thresh(warped, rgb_thresh=(100, 100, 100))
-    threshed_rock = color_thresh(warped, rgb_thresh=(255, 255, 0))
+    navigation_map = color_thresh(warped, (160, 160, 160),(255, 255, 255))
+    # obstacle_map = color_thresh(warped,(15, 15, 15),(89, 81, 75))
+    rock_map  = color_thresh(warped,(110,110,18),(255, 255, 19))
+    obstacle_map = np.absolute(np.float32(navigation_map) - 1) * mask
+
     # plt.imshow(threshed, smap='gray')
 
     # 4) Update Rover.vision_image (this will be displayed on left side of screen)
-    Rover.vision_image[:,:,2] = threshed_nav *255
-    Rover.vision_image[:,:,0] = threshed_obstacle *255
-    Rover.vision_image[:,:,1] = threshed_rock *255
+
+    Rover.vision_image[:,:,2] = navigation_map *255
+    Rover.vision_image[:,:,1] = rock_map *255
+    Rover.vision_image[:,:,0] = obstacle_map *255
+
 
 
     # 5) Convert map image pixel values to rover-centric coords
-    xpix_nav, ypix_nav = rover_coords(threshed_nav) # Convert to rover-centric coords
-    xpix_obstacle, ypix_obstacle = rover_coords(threshed_obstacle)
-    xpix_rock, ypix_rock = rover_coords(threshed_rock)
+    xpix_nav, ypix_nav = rover_coords(navigation_map) # Convert to rover-centric coords
+    xpix_obstacle, ypix_obstacle = rover_coords(obstacle_map)
+    xpix_rock, ypix_rock = rover_coords(rock_map)
+
 
     # 6) Convert rover-centric pixel values to world coordinates
     # Generate 200 x 200 pixel worldmap
-    Rover.worldmap = np.zeros((200, 200, 3))
-    scale = 10
-    nav_x_world, nav_y_world = pix_to_world(xpix_nav, ypix_nav, Rover.pos[0], Rover.pos[1], Rover.yaw, Rover.worldmap.shape[0], scale)
-    obstacle_x_world, obstacle_y_world = pix_to_world(xpix_obstacle, ypix_obstacle, Rover.pos[0], Rover.pos[1], Rover.yaw, Rover.worldmap.shape[0], scale)
-    rock_x_world, rock_y_world = pix_to_world(xpix_rock, ypix_rock, Rover.pos[0], Rover.pos[1], Rover.yaw, Rover.worldmap.shape[0], scale)
+    # Rover.worldmap = np.zeros((200, 200, 3))
+
+    # Rover.worldmap = Rover.worldmap.shape[0]
+    scale = 2 * dst_size
+    xpos,ypos = Rover.pos
+    yaw = Rover.yaw
+    # output image for navigation
+    nav_x_world, nav_y_world = pix_to_world(xpix_nav, ypix_nav, xpos, ypos, yaw, Rover.worldmap.shape[0], scale)
+    # output image for obstacles
+    obstacle_x_world, obstacle_y_world = pix_to_world(xpix_obstacle, ypix_obstacle, xpos, ypos, yaw, Rover.worldmap.shape[0], scale)
+    # output image for rocks
+    rock_x_world, rock_y_world = pix_to_world(xpix_rock, ypix_rock, xpos, ypos, yaw, Rover.worldmap.shape[0], scale)
+
 
 
     # 7) Update Rover worldmap (to be displayed on right side of screen)
     # Get navigable pixel positions in world coords
 
     Rover.worldmap[obstacle_y_world, obstacle_x_world, 0] += 1
+    # Blue channel Navigation
+    Rover.worldmap[nav_y_world, nav_x_world, 2] += 10
     Rover.worldmap[rock_y_world, rock_x_world, 1] += 1
-    Rover.worldmap[nav_y_world, nav_x_world, 2] += 1
+
+    Rover.worldmap[:,:,:] = np.clip(Rover.worldmap[:,:,:],0,255)
 
 
     # 8) Convert rover-centric pixel positions to polar coordinates
     # Update Rover pixel distances and angles
-    # dist, angles = to_polar_coords(xpix, ypix) # Convert to polar coords
-    # mean_dir = np.mean(angles) # Compute the average angle
-    Rover.nav_dists, Rover.nav_angles = to_polar_coords(xpix_nav, ypix_nav)
-    Rover.obstacle_dists, Rover.obstacle_angles = to_polar_coords(xpix_obstacle, ypix_obstacle)
-    Rover.rock_dists, Rover.rock_angles = to_polar_coords(xpix_rock, ypix_rock)
-    # print('Rover.nav_angles',Rover.nav_angles)
+    dists, angles = to_polar_coords(xpix_nav, ypix_nav)
+    Rover.nav_angles = angles
+    Rover.nav_dists = dists
+
 
 
 
