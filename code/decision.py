@@ -5,8 +5,9 @@ import random
 # This is where you can build a decision tree for determining throttle, brake and steer
 # commands based on the output of the perception_step() function
 def decision_step(Rover):
-    bias = -15
-    side = 15
+    bias = 13
+    side = 10
+    turn = 15
 
     # Implement conditionals to decide what to do given perception data
     # Here you're all set up with some basic functionality but you'll need to
@@ -67,8 +68,7 @@ def decision_step(Rover):
                     Rover.throttle = 0
                     # Release the brake to allow turning
                     Rover.brake = 0
-                    # Turn range is +/- 25 degrees, when stopped the next line will induce 4-wheel turning
-                    Rover.steer = 15 # Could be more clever here about which way to turn
+                    Rover.steer = -turn # Could be more clever here about which way to turn
 
                 # If we're stopped but see sufficient navigable terrain in front then go!
                 if len(Rover.nav_angles) >= Rover.go_forward:
@@ -81,15 +81,25 @@ def decision_step(Rover):
                     Rover.steer = np.clip(np.mean(Rover.nav_angles * 180/np.pi) + bias, -side, side)
                     Rover.mode = 'forward'
         elif Rover.mode == 'stuck':
+            # perc_mapped = Rover.perc_mapped #not sure this will work...
             print('-- reversing from stuck mode')
-            Rover.throttle = -Rover.max_vel
-            Rover.mode == 'forward'
-            Rover.count += 1
-            if Rover.count > 20:
-                Rover.steer = -side
-                Rover.brake = 0
-                Rover.throttle = 0
-                Rover.mode = 'stop'
+
+            Rover.throttle = Rover.max_vel
+            while Rover.mode == 'stuck':
+                Rover.count += 1
+                if Rover.count > 10:
+                    Rover.throttle = 0
+                    Rover.steer = -turn
+                    Rover.brake = 0
+                    print('-- stuck still stop')
+                    Rover.mode = 'donut'
+                if Rover.mode == 'donut':
+                    print('big fat donut',Rover.mode)
+                    Rover.throttle = -Rover.throttle_set
+                    Rover.brake = 0
+                    Rover.steer = np.clip(np.mean(Rover.nav_angles * 180/np.pi), -side, side)
+                    Rover.mode = 'stop'
+
 
 
 
@@ -104,9 +114,10 @@ def decision_step(Rover):
 
     if Rover.near_sample and not Rover.picking_up:
         Rover.send_pickup = True
+        Rover.mode = 'stop'
 
-    if Rover.send_pickup and not Rover.picking_up:
-        send_pickup()
+
+    if Rover.send_pickup and Rover.picking_up:
         Rover.send_pickup = False
         # self.samples_pos = None # To store the actual sample positions
         # self.samples_found = 0 # To count the number of samples found
@@ -118,5 +129,6 @@ def decision_step(Rover):
     if Rover.vel == 0.00 and Rover.throttle == Rover.max_vel:
         print('-- stuck')
         Rover.mode = 'stuck'
+    # if Rover.vel == Rover.max_vel and :
 
     return Rover
