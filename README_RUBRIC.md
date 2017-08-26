@@ -1,6 +1,4 @@
 ## Project: Search and Sample Return
-
-
 ---
 
 ** Setup/Notes
@@ -51,7 +49,6 @@
 
 ### Notebook Analysis
 #### 1. Run the functions provided in the notebook on test images (first with the test data provided, next on data you have recorded). Add/modify functions to allow for color selection of obstacles and rock samples.
-Here is an example of how to include an image in your writeup.
 
 ![Grid Threshed][image4]: ./calibration_images/grid_threshed.jpg
 
@@ -63,12 +60,18 @@ And another!
 ### Autonomous Navigation and Mapping
 
 #### 1. Fill in the `perception_step()` (at the bottom of the `perception.py` script) and `decision_step()` (in `decision.py`) functions in the autonomous mapping scripts and an explanation is provided in the writeup of how and why these functions were modified as they were.
+* perception_step() function
+** 1. Defined source and destination points for perspective transform
+** 2. Applied perspective transform and mask on obstacles
+** 3. Applied color threshhold using range of numbers and created obstacle map from the masked perspective transform
+** 4. Updated image on left side of screen to see what is range of view
+** 5. Convert map image to rover centric coordinates
+** 6. Convert rover centric values to world coordinates
+** 7. Updated map image on right side of screen
+** 8. Convert rover-centric pixel positions to polar coordinates, update angles and distances
 
 
-#### 2. Launching in autonomous mode your rover can navigate and map autonomously.  Explain your results and how you might improve them in your writeup.
-
-*Comments
-
+#### 2. Autonomous Navigation with Unity
 **Screen Resolution: 1024x768
 **Graphics Quality: Good
 **FPS: 15
