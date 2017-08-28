@@ -53,12 +53,12 @@ python drive_rover.py
 ### Notebook Analysis
 #### 1. Run the functions provided in the notebook on test images (first with the test data provided, next on data you have recorded). Add/modify functions to allow for color selection of obstacles and rock samples.
 
-![Grid Threshed][image4]: ./calibration_images/grid_threshed.jpg
+[Grid Threshed]:(./calibration_images/grid_threshed.jpg)
 
 #### 1. Populate the `process_image()` function with the appropriate analysis steps to map pixels identifying navigable terrain, obstacles and rock samples into a worldmap.  Run `process_image()` on your test data using the `moviepy` functions provided to create video output of your result.
 And another!
 
-![Right Side Nav][image5]:./calibration_images/right_side_nav.jpg
+[Right Side Nav]:(./calibration_images/right_side_nav.jpg)
 
 ### Autonomous Navigation and Mapping
 
@@ -77,15 +77,16 @@ And another!
 
 
 #### 2. Autonomous Navigation with Unity
-* Screen Resolution: 1024x768
-* Graphics Quality: Good
-* FPS: 15
+    Screen Resolution: 1024x768
+    Graphics Quality: Good
+    FPS: 15
 
     Rover is a basic wall follower with a bias of 13 and a side to side range of motion of -10/10.
     I gave the thresh a range so I could use the color thresh function for rocks too.
     Used a mask for the obstacles.
 
 ### Issues
+
     Rover still gets stuck in loop and on obstacles sometimes.
     It picks up rocks if they are right in front of it.
     Would like to figure out way to eliminate area that it's already travelled.
