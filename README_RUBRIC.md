@@ -91,21 +91,11 @@ And another!
 
 &nbsp;&nbsp;**FPS: 15**
 
-&nbsp;&nbsp;Rover is a basic wall follower with a bias of 13 and a side to side range of motion of -10/10.
-
-&nbsp;&nbsp;I gave the thresh a range so I could use the color thresh function for rocks too.
-
-&nbsp;&nbsp;Used a mask for the obstacles.
+&nbsp;&nbsp;Rover is a basic wall follower with a bias of 13 and a side to side range of motion of -10/10. I gave the thresh a range so I could use the color thresh function for rocks too. Used a mask for the obstacles.
 
 ### Issues
 
-&nbsp;&nbsp;Rover still gets stuck in loop and on obstacles sometimes.
-
-&nbsp;&nbsp;It picks up rocks if they are right in front of it.
-
-&nbsp;&nbsp;Would like to figure out way to eliminate area that it's already travelled.
-
-&nbsp;&nbsp;Stops following left wall if the curve is too large or if the Rover is pointing the wrong way when it goes around some turns.
+&nbsp;&nbsp;Rover still gets stuck in loop and on obstacles sometimes. It picks up rocks if they are right in front of it. Would like to figure out way to eliminate area that it's already travelled. Stops following left wall if the curve is too large or if the Rover is pointing the wrong way when it goes around some turns.
 
 
 ### Video of test mapping
