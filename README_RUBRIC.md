@@ -73,31 +73,31 @@ And another!
 
 ##### perception_step() function
 
-    1. Defined source and destination points for perspective transform
-    2. Applied perspective transform and mask on obstacles
-    3. Applied color threshhold using range of numbers and created obstacle map from the masked perspective transform
-    4. Updated image on left side of screen to see what is range of view
-    5. Convert map image to rover centric coordinates
-    6. Convert rover centric values to world coordinates
-    7. Updated map image on right side of screen
-    8. Convert rover-centric pixel positions to polar coordinates, update angles and distances
+  1. Defined source and destination points for perspective transform
+  2. Applied perspective transform and mask on obstacles
+  3. Applied color threshhold using range of numbers and created obstacle map from the masked perspective transform
+  4. Updated image on left side of screen to see what is range of view
+  5. Convert map image to rover centric coordinates
+  6. Convert rover centric values to world coordinates
+  7. Updated map image on right side of screen
+  8. Convert rover-centric pixel positions to polar coordinates, update angles and distances
 
 
 #### 2. Autonomous Navigation with Unity
-    Screen Resolution: 1024x768
-    Graphics Quality: Good
-    FPS: 15
+  Screen Resolution: 1024x768
+  Graphics Quality: Good
+  FPS: 15
 
-    Rover is a basic wall follower with a bias of 13 and a side to side range of motion of -10/10.
-    I gave the thresh a range so I could use the color thresh function for rocks too.
-    Used a mask for the obstacles.
+  Rover is a basic wall follower with a bias of 13 and a side to side range of motion of -10/10.
+  I gave the thresh a range so I could use the color thresh function for rocks too.
+  Used a mask for the obstacles.
 
 ### Issues
 
-    Rover still gets stuck in loop and on obstacles sometimes.
-    It picks up rocks if they are right in front of it.
-    Would like to figure out way to eliminate area that it's already travelled.
-    Stops following left wall if the curve is too large or if the Rover is pointing the wrong way when it goes around some turns.
+  Rover still gets stuck in loop and on obstacles sometimes.
+  It picks up rocks if they are right in front of it.
+  Would like to figure out way to eliminate area that it's already travelled.
+  Stops following left wall if the curve is too large or if the Rover is pointing the wrong way when it goes around some turns.
 
 
 ### Video of test mapping
