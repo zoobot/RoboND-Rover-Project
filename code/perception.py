@@ -3,19 +3,7 @@ import cv2
 
 # Identify pixels above the threshold
 # Threshold of RGB > 160 does a nice job of identifying ground pixels only
-# def color_thresh(img, rgb_thresh):
-#     # Create an array of zeros same xy size as img, but single channel
-#     color_select = np.zeros_like(img[:,:,0])
-#     # Require that each pixel be above all three threshold values in RGB
-#     # above_thresh will now contain a boolean array with "True"
-#     # where threshold was met
-#     above_thresh = (img[:,:,0] > rgb_thresh[0])  \
-#                 & (img[:,:,1] > rgb_thresh[1]) \
-#                 & (img[:,:,2] > rgb_thresh[2])
-#     # Index the array of zeros with the boolean array and set to 1
-#     color_select[above_thresh] = 1
-#     # Return the binary image
-#     return color_select
+
 
 def color_thresh(img, rgb_thresh_low, rgb_thresh_high):
     # Create an array of zeros same xy size as img, but single channel
@@ -91,9 +79,8 @@ def pix_to_world(xpix, ypix, xpos, ypos, yaw, world_size, scale):
 def perspect_transform(img, src, dst):
     M = cv2.getPerspectiveTransform(src, dst)
     warped = cv2.warpPerspective(img, M, (img.shape[1], img.shape[0]))# keep same size as input image
-    mask = cv2.warpPerspective(np.ones_like(img[:,:,0]), M, (img.shape[1], img.shape[0])) # make a mask of 1s
+    mask = cv2.warpPerspective(np.ones_like(img[:,:,0]), M, (img.shape[1], img.shape[0])) # mask
     return warped, mask
-    # return warped
 
 # Apply the above functions in succession and update the Rover state accordingly
 def perception_step(Rover):
@@ -120,10 +107,7 @@ def perception_step(Rover):
     rock_map  = color_thresh(warped,(120,120,18),(255, 255, 19))
     obstacle_map = np.absolute(np.float32(navigation_map) - 1) * mask
 
-    # plt.imshow(threshed, smap='gray')
-
     # 4) Update Rover.vision_image (this will be displayed on left side of screen)
-
     Rover.vision_image[:,:,2] = navigation_map *255
     Rover.vision_image[:,:,1] = rock_map *255
     Rover.vision_image[:,:,0] = obstacle_map *255
@@ -137,10 +121,6 @@ def perception_step(Rover):
 
 
     # 6) Convert rover-centric pixel values to world coordinates
-    # Generate 200 x 200 pixel worldmap
-    # Rover.worldmap = np.zeros((200, 200, 3))
-
-    # Rover.worldmap = Rover.worldmap.shape[0]
     scale = 2 * dst_size
     xpos,ypos = Rover.pos
     yaw = Rover.yaw
@@ -152,15 +132,12 @@ def perception_step(Rover):
     rock_x_world, rock_y_world = pix_to_world(xpix_rock, ypix_rock, xpos, ypos, yaw, Rover.worldmap.shape[0], scale)
 
 
-
     # 7) Update Rover worldmap (to be displayed on right side of screen)
     # Get navigable pixel positions in world coords
-
-    Rover.worldmap[obstacle_y_world, obstacle_x_world, 0] += 1
     # Blue channel Navigation
     Rover.worldmap[nav_y_world, nav_x_world, 2] += 5
+    Rover.worldmap[obstacle_y_world, obstacle_x_world, 0] += 1
     Rover.worldmap[rock_y_world, rock_x_world, 1] += 1
-
     Rover.worldmap[:,:,:] = np.clip(Rover.worldmap[:,:,:],0,255)
 
 

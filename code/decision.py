@@ -23,17 +23,17 @@ def decision_step(Rover):
             # Check the extent of navigable terrain
             if len(Rover.nav_angles) >= Rover.stop_forward:
                 Rover.count = 0
-                print(' -- forward good terrain -- ',Rover.mode)
+                print('forward good terrain',Rover.mode)
                 # If mode is forward, navigable terrain looks good
                 # and velocity is below max, then throttle
                 if Rover.vel < Rover.max_vel:
-                    print(' -- forward throttling to max -- ',Rover.mode)
+                    print('forward throttling to max',Rover.mode)
                     # Set throttle value to throttle setting
                     Rover.throttle = Rover.throttle_set
                     if Rover.vel == 0 and Rover.throttle == 0.2:
                         Rover.mode = 'stuck'
                 else: # Else coast
-                    print(' -- forward coasting -- ',Rover.mode)
+                    print('forward coasting',Rover.mode)
                     Rover.throttle = 0
                 # Set steering to average angle clipped to the range +/- 25
                 Rover.brake = 0
@@ -41,7 +41,7 @@ def decision_step(Rover):
 
             # If there's a lack of navigable terrain pixels then go to 'stop' mode
             elif len(Rover.nav_angles) < Rover.stop_forward:
-                print(' -- stopping because bad terrain -- ',Rover.mode)
+                print('stopping because bad terrain',Rover.mode)
                 # Set mode to "stop" and hit the brakes!
                 Rover.throttle = 0
                 # Set brake to stored brake value
@@ -82,7 +82,7 @@ def decision_step(Rover):
                     Rover.mode = 'forward'
         elif Rover.mode == 'stuck':
             # perc_mapped = Rover.perc_mapped #not sure this will work...
-            print('-- reversing from stuck mode')
+            print('reversing from stuck mode')
 
             Rover.throttle = Rover.max_vel
             while Rover.mode == 'stuck':
@@ -91,7 +91,7 @@ def decision_step(Rover):
                     Rover.throttle = 0
                     Rover.steer = -turn
                     Rover.brake = 0
-                    print('-- stuck still stop')
+                    print('stuck still stop')
                     Rover.mode = 'donut'
                 if Rover.mode == 'donut':
                     print('big fat donut',Rover.mode)
@@ -115,20 +115,12 @@ def decision_step(Rover):
     if Rover.near_sample and not Rover.picking_up:
         Rover.send_pickup = True
         Rover.mode = 'stop'
-
-
     if Rover.send_pickup and Rover.picking_up:
         Rover.send_pickup = False
-        # self.samples_pos = None # To store the actual sample positions
-        # self.samples_found = 0 # To count the number of samples found
-        # self.near_sample = 0 # Will be set to telemetry value data["near_sample"]
-        # self.picking_up = 0 # Will be set to telemetry value data["picking_up"]
-        # self.send_pickup = False # Set to True to trigger rock pickup
 
 
     if Rover.vel == 0.00 and Rover.throttle == Rover.max_vel:
-        print('-- stuck')
+        print('stuck')
         Rover.mode = 'stuck'
-    # if Rover.vel == Rover.max_vel and :
 
     return Rover

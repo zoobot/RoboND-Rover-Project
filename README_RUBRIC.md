@@ -86,4 +86,5 @@ Wouold like to figure out way to eliminate area that it's already travelled.
 Stops following left wall if the curve is too large or if the Rover is pointing the wrong way when it goes around some turns.
 
 
-
+* Video of test mapping
+#### https://youtu.be/kFUt1g_ojzA
