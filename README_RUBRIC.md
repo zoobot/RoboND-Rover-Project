@@ -84,9 +84,12 @@ And another!
 
 
 #### 2. Autonomous Navigation with Unity
-    **Screen Resolution: 1024x768**
-    **Graphics Quality: Good**
-    **FPS: 15**
+
+**Screen Resolution: 1024x768**
+
+**Graphics Quality: Good**
+
+**FPS: 15**
 
   Rover is a basic wall follower with a bias of 13 and a side to side range of motion of -10/10.
   I gave the thresh a range so I could use the color thresh function for rocks too.
