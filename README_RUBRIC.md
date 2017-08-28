@@ -1,24 +1,25 @@
 ## Project: Search and Sample Return
 ---
 
-** Setup/Notes
-* conda info --envs #show the envs
-* conda create -n testEnv python=3.5 # create environmet
-# activate the environment
-* source activate testEnv
-* jupyter notebook starts the jupyter notebook
-* python drive_rover.py starts the Rover driving in Unity Engine
+**Commands
+```
+conda info --envs
+conda create -n testEnv python=3.5
+source activate testEnv
+jupyter notebook
+python drive_rover.py
+```
 
 
 **The goals / steps of this project are the following:**
-* Goal is to get Rover driving autonomously and find and pickup rocks
-* Set up mini-conda environment for python code
-* Complete all Training in Jupyter Notebook
-* Record Video
-* Install Unity Engine Simulator
-* Drive Rover with python via Unity Engine
-* Map at least 40% of the environment with 60% fidelity
-* Find at least 1 rock
+[x] Goal is to get Rover driving autonomously and find and pickup rocks
+[x] Set up mini-conda environment for python code
+[x] Complete all Training in Jupyter Notebook
+[x] Record Video
+[x] Install Unity Engine Simulator
+[x] Drive Rover with python via Unity Engine
+[x] Map at least 40% of the environment with 60% fidelity
+[x] Find at least 1 rock
 
 **Training / Calibration**
 
@@ -60,31 +61,33 @@ And another!
 ### Autonomous Navigation and Mapping
 
 #### 1. Fill in the `perception_step()` (at the bottom of the `perception.py` script) and `decision_step()` (in `decision.py`) functions in the autonomous mapping scripts and an explanation is provided in the writeup of how and why these functions were modified as they were.
-* perception_step() function
-** 1. Defined source and destination points for perspective transform
-** 2. Applied perspective transform and mask on obstacles
-** 3. Applied color threshhold using range of numbers and created obstacle map from the masked perspective transform
-** 4. Updated image on left side of screen to see what is range of view
-** 5. Convert map image to rover centric coordinates
-** 6. Convert rover centric values to world coordinates
-** 7. Updated map image on right side of screen
-** 8. Convert rover-centric pixel positions to polar coordinates, update angles and distances
+##### perception_step() function
+
+    1. Defined source and destination points for perspective transform
+    2. Applied perspective transform and mask on obstacles
+    3. Applied color threshhold using range of numbers and created obstacle map from the masked perspective transform
+    4. Updated image on left side of screen to see what is range of view
+    5. Convert map image to rover centric coordinates
+    6. Convert rover centric values to world coordinates
+    7. Updated map image on right side of screen
+    8. Convert rover-centric pixel positions to polar coordinates, update angles and distances
 
 
 #### 2. Autonomous Navigation with Unity
-**Screen Resolution: 1024x768
-**Graphics Quality: Good
-**FPS: 15
+* Screen Resolution: 1024x768
+* Graphics Quality: Good
+* FPS: 15
 
-#### Rover is a basic wall follower with a bias of 13 and a side to side range of motion of -10/10.
-I gave the thresh a range so I could use the color thresh function for rocks too. Used a mask for the obstacles.
+| Rover is a basic wall follower with a bias of 13 and a side to side range of motion of -10/10.
+| I gave the thresh a range so I could use the color thresh function for rocks too.
+| Used a mask for the obstacles.
 
-* Issues
-#### Rover still gets stuck in loop and on obstacles sometimes.
-It picks up rocks if they are right in front of it.
-Wouold like to figure out way to eliminate area that it's already travelled.
-Stops following left wall if the curve is too large or if the Rover is pointing the wrong way when it goes around some turns.
+### Issues
+| Rover still gets stuck in loop and on obstacles sometimes.
+| It picks up rocks if they are right in front of it.
+| Would like to figure out way to eliminate area that it's already travelled.
+| Stops following left wall if the curve is too large or if the Rover is pointing the wrong way when it goes around some turns.
 
 
-* Video of test mapping
-#### https://youtu.be/kFUt1g_ojzA
+### Video of test mapping
+    https://youtu.be/kFUt1g_ojzA
