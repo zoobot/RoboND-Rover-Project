@@ -6,6 +6,9 @@
 [example_right_side_nav]:./calibration_images/right_side_nav.jpg
 # Search and Sample Return Project
 
+### Video of RoboND Rover driving autonomously
+[![Rover Video](./output/rover.gif)](https://youtu.be/zqgqZxUx1ug)
+
 
 ## Project: Search and Sample Return
 ![alt text][rover_image]
@@ -15,8 +18,8 @@
 
 ```
 conda info --envs
-conda create -n testEnv python=3.5
-source activate testEnv
+conda create -n RoboND python=3.5
+source activate RoboND
 jupyter notebook
 python drive_rover.py
 ```
@@ -98,7 +101,5 @@ And another!
 &nbsp;&nbsp;Rover still gets stuck in loop and on obstacles sometimes. It picks up rocks if they are right in front of it. Would like to figure out way to eliminate area that it's already travelled. Stops following left wall if the curve is too large or if the Rover is pointing the wrong way when it goes around some turns.
 
 
-### Video of test mapping
 
-[https://youtu.be/kFUt1g_ojzA](https://youtu.be/kFUt1g_ojzA)
 
