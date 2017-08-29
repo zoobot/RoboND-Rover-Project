@@ -5,7 +5,7 @@
 [example_grid_threshed]:./calibration_images/grid_threshed.jpg
 [example_right_side_nav]:./calibration_images/right_side_nav.jpg
 # Search and Sample Return Project
-## Project: Search and Sample Return
+
 [![Rover Video](./output/rover.gif)](https://youtu.be/zqgqZxUx1ug)
 ---
 
