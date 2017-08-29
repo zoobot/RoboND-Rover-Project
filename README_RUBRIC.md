@@ -5,13 +5,8 @@
 [example_grid_threshed]:./calibration_images/grid_threshed.jpg
 [example_right_side_nav]:./calibration_images/right_side_nav.jpg
 # Search and Sample Return Project
-
-### Video of RoboND Rover driving autonomously
-[![Rover Video](./output/rover.gif)](https://youtu.be/zqgqZxUx1ug)
-
-
 ## Project: Search and Sample Return
-![alt text][rover_image]
+[![Rover Video](./output/rover.gif)](https://youtu.be/zqgqZxUx1ug)
 ---
 
 ### Commands
