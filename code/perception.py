@@ -5,20 +5,28 @@ import cv2
 # Threshold of RGB > 160 does a nice job of identifying ground pixels only
 
 
-def color_thresh(img, rgb_thresh_low, rgb_thresh_high):
+def color_thresh(img, thresh_low, thresh_high):
     # Create an array of zeros same xy size as img, but single channel
     color_select = np.zeros_like(img[:,:,0])
     # Require that each pixel be above all three threshold values in RGB
     # above_thresh will now contain a boolean array with "True"
     # where threshold was met
-    above_thresh = (img[:,:,0] > rgb_thresh_low[0]) & (img[:,:,0] <= rgb_thresh_high[0]) \
-                & (img[:,:,1] > rgb_thresh_low[1]) & (img[:,:,1] <= rgb_thresh_high[1])\
-                & (img[:,:,2] > rgb_thresh_low[2]) & (img[:,:,2] <= rgb_thresh_high[2])
+    above_thresh = (img[:,:,0] > thresh_low[0]) & (img[:,:,0] <= thresh_high[0]) \
+                & (img[:,:,1] > thresh_low[1]) & (img[:,:,1] <= thresh_high[1])\
+                & (img[:,:,2] > thresh_low[2]) & (img[:,:,2] <= thresh_high[2])
+
     # Index the array of zeros with the boolean array and set to 1
     color_select[above_thresh] = 1
     # Return the binary image
     return color_select
 
+def rock_thresh(img, thresh_low, thresh_high):
+    #use cv2 color for rock
+    img_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV,3)
+    # make mask of yellows
+    rock_mask = cv2.inRange(img_hsv, thresh_low, thresh_high)
+
+    return rock_mask
 
 # Define a function to convert to rover-centric coordinates
 def rover_coords(binary_img):
@@ -104,7 +112,8 @@ def perception_step(Rover):
     # 3) Apply color threshold to identify navigable terrain/obstacles/rock samples
     navigation_map = color_thresh(warped, (177, 177, 177),(255, 255, 255))
     # obstacle_map = color_thresh(warped,(15, 15, 15),(160, 160, 160))
-    rock_map  = color_thresh(warped,(120,120,18),(255, 255, 19))
+    # rock_map  = color_thresh(warped,(120,120,18),(255, 255, 19))
+    rock_map  = rock_thresh(warped,(18,120,120),(19,255, 255))
     obstacle_map = np.absolute(np.float32(navigation_map) - 1) * mask
 
     # 4) Update Rover.vision_image (this will be displayed on left side of screen)
@@ -122,7 +131,10 @@ def perception_step(Rover):
 
     # 6) Convert rover-centric pixel values to world coordinates
     scale = 2 * dst_size
-    xpos,ypos = Rover.pos
+    # xpos,ypos = Rover.pos
+    xpos = Rover.pos[0]
+    ypos = Rover.pos[1]
+
     yaw = Rover.yaw
     # output image for navigation
     nav_x_world, nav_y_world = pix_to_world(xpix_nav, ypix_nav, xpos, ypos, yaw, Rover.worldmap.shape[0], scale)
